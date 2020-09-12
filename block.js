@@ -1,13 +1,33 @@
+const { GENESIS_DATA } = require('./config');
+const crytpoHash = require('./crypto-hash');
+
 class Block {
-  constructor({ timestamp, lastHash, hash, data, nonce, difficulty }) {
+  constructor({ timestamp, lastHash, hash, data }) {
     this.timestamp = timestamp;
     this.lastHash = lastHash;
     this.hash = hash;
     this.data = data;
   }
+
+  // A Factory Method
+  // Creating a new block whoever calls genesis
+  static genesis(){
+    return new this(GENESIS_DATA);
+  }
+
+  static mineBlock({ lastBlock, data }){
+
+    const timestamp = Date.now();
+    const lastHash = lastBlock.hash;
+
+    return new this({
+      timestamp: Date.now(),
+      lastHash: lastBlock.hash,
+      data,
+      hash: crytpoHash(timestamp, lastHash, data)
+     });
+  }
 }
-
-
 
 
 module.exports = Block;
