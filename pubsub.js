@@ -8,13 +8,12 @@ const CHANNELS = {
 class PubSub{
     constructor({ blockchain }){
       this.blockchain = blockchain;
-      
+
       this.publisher = redis.createClient();
       this.subscriber = redis.createClient();
 
-      //this.subscriber.subscribe(CHANNELS.TEST);
-      //this.subscriber.subscribe(CHANNELS.BLOCKCHAIN);
       this.subscribeToChannels();
+       
 
       this.subscriber.on(
         'message', 
@@ -39,6 +38,7 @@ class PubSub{
       
     }
 
+    // This is to make sure that publisher non sequential messages to the same local subscriber
     publish({ channel, message}){
       this.subscriber.unsubscribe(channel, () => {
          this.publisher.publish(channel, message, () => {
@@ -53,12 +53,9 @@ class PubSub{
         message: JSON.stringify(this.blockchain.chain)
       });
     }
-}
+  }
 
-// Testing
 //const testPubSub = new PubSub();
 //setTimeout(() => testPubSub.publisher.publish(CHANNELS.TEST, 'foo'), 1000);
 
 module.exports = PubSub;
-
-
